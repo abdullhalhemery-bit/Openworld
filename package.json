@@ -14,7 +14,7 @@
     "url": "git+https://github.com/abdullhalhemery-bit/Openworld.git"
   },
   "scripts": {
-    "build": "next build",
+    "build": "next build --no-turbo"
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "next start"
   },
