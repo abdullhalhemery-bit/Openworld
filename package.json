@@ -1,42 +1,24 @@
 {
-  "author": "",
-  "bugs": {
-    "url": "https://github.com/abdullhalhemery-bit/Openworld/issues"
-  },
+  "name": "openworld",
+  "version": "1.0.0",
   "description": "Welcome to Openworld, a cutting-edge web platform designed to showcase innovative features, provide seamless access to critical information, and foster a strong connection between users and the project's vision. Built with a modern tech stack including Next.js, TypeScript, and Tailwind CSS, Openworld aims to deliver an exceptional, user-friendly experience with a clean, responsive, and visually appealing design.",
-  "homepage": "https://github.com/abdullhalhemery-bit/Openworld#readme",
-  "keywords": [],
+  "author": "",
   "license": "ISC",
   "main": "index.js",
-  "name": "openworld",
+  "type": "commonjs",
+  "homepage": "https://github.com/abdullhalhemery-bit/Openworld#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/abdullhalhemery-bit/Openworld.git"
   },
-{
-  "author": "",
   "bugs": {
     "url": "https://github.com/abdullhalhemery-bit/Openworld/issues"
   },
-  "description": "Welcome to Openworld, a cutting-edge web platform designed to showcase innovative features, provide seamless access to critical information, and foster a strong connection between users and the project's vision. Built with a modern tech stack including Next.js, TypeScript, and Tailwind CSS, Openworld aims to deliver an exceptional, user-friendly experience with a clean, responsive, and visually appealing design.",
-  "homepage": "https://github.com/abdullhalhemery-bit/Openworld#readme",
   "keywords": [],
-  "license": "ISC",
-  "main": "index.js",
-  "name": "openworld",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/abdullhalhemery-bit/Openworld.git"
-  },
-"scripts": {
-  "build": "next build",
-  "start": "next start",
-  "test": "echo \"Error: no test specified\" && exit 1"
-},
-  "type": "commonjs",
-  "version": "1.0.0"
-}
-  },
-  "type": "commonjs",
-  "version": "1.0.0"
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  }
 }
