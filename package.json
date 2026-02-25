@@ -1,22 +1,23 @@
 {
-  "name": "openworld",
-  "version": "1.0.0",
-  "description": "Welcome to Openworld, a cutting-edge web platform designed to showcase innovative features, provide seamless access to critical information, and foster a strong connection between users and the project's vision. Built with a modern tech stack including Next.js, TypeScript, and Tailwind CSS, Openworld aims to deliver an exceptional, user-friendly experience with a clean, responsive, and visually appealing design.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "next build"
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/abdullhalhemery-bit/Openworld/issues"
   },
+  "description": "Welcome to Openworld, a cutting-edge web platform designed to showcase innovative features, provide seamless access to critical information, and foster a strong connection between users and the project's vision. Built with a modern tech stack including Next.js, TypeScript, and Tailwind CSS, Openworld aims to deliver an exceptional, user-friendly experience with a clean, responsive, and visually appealing design.",
+  "homepage": "https://github.com/abdullhalhemery-bit/Openworld#readme",
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "openworld",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/abdullhalhemery-bit/Openworld.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/abdullhalhemery-bit/Openworld/issues"
+  "scripts": {
+    "build": "next build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "next start"
   },
-  "homepage": "https://github.com/abdullhalhemery-bit/Openworld#readme"
+  "type": "commonjs",
+  "version": "1.0.0"
 }
