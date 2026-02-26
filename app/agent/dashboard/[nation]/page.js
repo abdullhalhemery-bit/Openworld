@@ -10,9 +10,10 @@ const defaultPolicies = {
   economicModel: 'Market Economy',
   votingSystem: 'Direct Representation',
   representation: 'proportional',
+  customPerks: '',
 };
 
-function PolicyEditor({ country }) {
+function PolicyEditor({ nation }) {
   const [policies, setPolicies] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -28,11 +29,11 @@ function PolicyEditor({ country }) {
         const { data, error } = await supabase
           .from('policies')
           .select('*')
-          .eq('country_code', country)
+          .eq('nation_slug', nation.slug)
           .single();
 
         if (error && error.code === '406') {
-          setPolicies(defaultPolicies);
+          setPolicies({ ...defaultPolicies, language: nation.language || 'English' });
         } else if (error) {
           throw error;
         } else {
@@ -46,14 +47,14 @@ function PolicyEditor({ country }) {
     };
 
     fetchPolicies();
-  }, [country]);
+  }, [nation.slug]);
 
   const handleSave = async () => {
     if (!policies) return;
     try {
-      await supabase.from('policies').upsert([{ ...policies, country_code: country }], {
-        onConflict: 'country_code',
-      });
+      await supabase.from('policies').upsert([
+        { ...policies, nation_slug: nation.slug, nation_name: nation.name },
+      ], { onConflict: 'nation_slug' });
       alert('Policies saved.');
     } catch (err) {
       alert('Failed to save policies.');
@@ -87,13 +88,17 @@ function PolicyEditor({ country }) {
           Representation
           <input className="input" value={policies.representation} onChange={(e) => setPolicies({ ...policies, representation: e.target.value })} />
         </label>
+        <label>
+          Custom Perks / Advantages
+          <textarea className="input" rows={3} value={policies.customPerks || ''} onChange={(e) => setPolicies({ ...policies, customPerks: e.target.value })} />
+        </label>
         <button className="btn btn-primary" onClick={handleSave}>Save Policies</button>
       </div>
     </div>
   );
 }
 
-function Voting({ country }) {
+function Voting({ nation }) {
   const [candidates, setCandidates] = useState([]);
   const [newNominee, setNewNominee] = useState('');
 
@@ -102,19 +107,19 @@ function Voting({ country }) {
     const { data } = await supabase
       .from('candidates')
       .select('id, name, votes, nominatedBy')
-      .eq('country_code', country)
+      .eq('nation_slug', nation.slug)
       .order('votes', { ascending: false });
     setCandidates(data || []);
   };
 
   useEffect(() => {
     loadCandidates();
-  }, [country]);
+  }, [nation.slug]);
 
   const nominate = async () => {
     if (!newNominee.trim()) return;
     await supabase.from('candidates').insert([
-      { name: newNominee.trim(), country_code: country, nominatedBy: 'Agent' },
+      { name: newNominee.trim(), nation_slug: nation.slug, nominatedBy: 'Agent' },
     ]);
     setNewNominee('');
     loadCandidates();
@@ -153,12 +158,45 @@ function Voting({ country }) {
 }
 
 export default function Dashboard({ params }) {
-  const country = params.country?.toUpperCase();
+  const slug = params.nation?.toLowerCase();
+  const [nation, setNation] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!country || country.length !== 3) {
+  useEffect(() => {
+    const fetchNation = async () => {
+      if (!supabase) {
+        setLoading(false);
+        return;
+      }
+      const { data, error } = await supabase
+        .from('nations')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+      if (!error) setNation(data);
+      setLoading(false);
+    };
+
+    fetchNation();
+  }, [slug]);
+
+  if (!slug || slug.length < 2) {
     return (
       <div className="container" style={{ padding: '60px 0' }}>
-        <div className="alert">Invalid country code. Please return to the agent login.</div>
+        <div className="alert">Invalid nation slug. Please return to the agent login.</div>
+        <Link href="/agent/login" className="btn btn-primary" style={{ marginTop: 16 }}>Back to login</Link>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return <div className="container" style={{ padding: '60px 0' }}>Loading nation…</div>;
+  }
+
+  if (!nation) {
+    return (
+      <div className="container" style={{ padding: '60px 0' }}>
+        <div className="alert">Nation not found. Ask another agent for a valid link.</div>
         <Link href="/agent/login" className="btn btn-primary" style={{ marginTop: 16 }}>Back to login</Link>
       </div>
     );
@@ -167,10 +205,11 @@ export default function Dashboard({ params }) {
   return (
     <div className="container" style={{ padding: '40px 0' }}>
       <Link href="/agent/login" className="badge">← Switch nation</Link>
-      <h1 style={{ marginTop: 16 }}>Governance Dashboard — {country}</h1>
+      <h1 style={{ marginTop: 16 }}>Governance Dashboard — {nation.name}</h1>
+      <p style={{ color: 'var(--muted)' }}>{nation.description || 'No description yet.'}</p>
       <div className="grid-2" style={{ marginTop: 24 }}>
-        <PolicyEditor country={country} />
-        <Voting country={country} />
+        <PolicyEditor nation={nation} />
+        <Voting nation={nation} />
       </div>
     </div>
   );
