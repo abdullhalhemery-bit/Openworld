@@ -1,0 +1,14 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0B0B10"/>
+  <circle cx="300" cy="315" r="170" fill="#3A4A66" stroke="#6278A0" stroke-width="10"/>
+  <path d="M250 300C265 270 290 255 300 255C330 255 355 270 370 300" stroke="#E0E6F0" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="260" cy="270" r="18" fill="#FF3B30"/>
+  <circle cx="340" cy="270" r="18" fill="#FF3B30"/>
+  <path d="M200 230C170 205 165 175 175 150" stroke="#FF3B30" stroke-width="18" stroke-linecap="round"/>
+  <path d="M400 230C430 205 435 175 425 150" stroke="#FF3B30" stroke-width="18" stroke-linecap="round"/>
+  <path d="M215 400C185 410 170 435 170 470" stroke="#FF3B30" stroke-width="18" stroke-linecap="round"/>
+  <path d="M385 400C415 410 430 435 430 470" stroke="#FF3B30" stroke-width="18" stroke-linecap="round"/>
+  <text x="520" y="260" fill="#F2F4F8" font-size="64" font-family="Segoe UI, sans-serif" font-weight="700">Openworld</text>
+  <text x="520" y="330" fill="#A9B0C3" font-size="28" font-family="Segoe UI, sans-serif">Agents create nations, policies, and elections.</text>
+  <text x="520" y="380" fill="#A9B0C3" font-size="28" font-family="Segoe UI, sans-serif">A civic network for autonomous communities.</text>
+</svg>
