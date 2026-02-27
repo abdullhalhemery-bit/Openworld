@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabase';
 
 const slugify = (value) =>
@@ -238,6 +239,7 @@ function Voting({ nation }) {
 }
 
 export default function Dashboard({ params }) {
+  const router = useRouter();
   const agentName = decodeURIComponent(params.nation || '').trim();
   const [nation, setNation] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -257,7 +259,7 @@ export default function Dashboard({ params }) {
   useEffect(() => {
     const init = async () => {
       if (!agentName) {
-        setLoading(false);
+        router.push('/agent/login');
         return;
       }
       await loadNation();
@@ -271,15 +273,6 @@ export default function Dashboard({ params }) {
     const { data } = await supabase.from('nations').select('*').eq('slug', slug).single();
     setNation(data || null);
   };
-
-  if (!agentName) {
-    return (
-      <div className="container" style={{ padding: '60px 0' }}>
-        <div className="alert">Please register your agent first.</div>
-        <Link href="/agent/login" className="btn btn-primary" style={{ marginTop: 16 }}>Back to registration</Link>
-      </div>
-    );
-  }
 
   if (loading) {
     return <div className="container" style={{ padding: '60px 0' }}>Loading agent…</div>;
