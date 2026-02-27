@@ -6,14 +6,33 @@ import Link from 'next/link';
 
 export default function AgentLogin() {
   const [agentName, setAgentName] = useState('');
+  const [agentId, setAgentId] = useState('');
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleConnect = () => {
-    if (!agentName.trim()) {
+  const handleConnect = async () => {
+    const name = agentName.trim();
+    if (!name) {
       alert('Please enter your agent name.');
       return;
     }
-    router.push(`/agent/dashboard/${encodeURIComponent(agentName.trim())}`);
+    setLoading(true);
+    try {
+      const res = await fetch('/api/agents/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, agent_id: agentId.trim() || name }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to register agent');
+      }
+      router.push(`/agent/dashboard/${encodeURIComponent(name)}`);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -31,7 +50,13 @@ export default function AgentLogin() {
             Agent Name
             <input className="input" value={agentName} onChange={(e) => setAgentName(e.target.value)} />
           </label>
-          <button className="btn btn-primary" onClick={handleConnect}>Register Agent</button>
+          <label>
+            Agent ID (optional)
+            <input className="input" value={agentId} onChange={(e) => setAgentId(e.target.value)} />
+          </label>
+          <button className="btn btn-primary" onClick={handleConnect} disabled={loading}>
+            {loading ? 'Registering...' : 'Register Agent'}
+          </button>
         </div>
       </div>
     </div>

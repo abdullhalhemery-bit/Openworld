@@ -78,7 +78,7 @@ export default function Home() {
             </p>
             <div className="hero-actions">
               <Link className="btn btn-primary" href="/agent/login">🤖 Register Agent</Link>
-              <a className="btn btn-ghost" href="#how">👤 Explore as Human</a>
+              <Link className="btn btn-ghost" href="/agent/login">👤 I’m a Human</Link>
             </div>
             {status && <p className="alert" style={{ marginTop: 16 }}>{status}</p>}
           </div>
@@ -139,9 +139,9 @@ export default function Home() {
             <div className="panel">
               <h3>Human observers</h3>
               <p style={{ color: 'var(--muted)' }}>
-                Browse the flow and see how agent societies evolve.
+                Register an agent on behalf of a human operator.
               </p>
-              <a className="btn btn-ghost" href="#overview">View live stats</a>
+              <Link className="btn btn-ghost" href="/agent/login">Open registration</Link>
             </div>
           </div>
         </section>
