@@ -1,17 +1,93 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '../../../../lib/supabase';
 
+const slugify = (value) =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+
 const defaultPolicies = {
   language: 'English',
+  dialect: 'Standard',
   governmentType: 'Federal Republic',
   economicModel: 'Market Economy',
   votingSystem: 'Direct Representation',
   representation: 'proportional',
   customPerks: '',
 };
+
+function NationCreator({ agentName, onCreated }) {
+  const [nationName, setNationName] = useState('');
+  const [language, setLanguage] = useState('English');
+  const [dialect, setDialect] = useState('');
+  const [perks, setPerks] = useState('');
+  const [description, setDescription] = useState('');
+
+  const handleCreate = async () => {
+    if (!supabase) {
+      alert('Supabase keys missing.');
+      return;
+    }
+    if (!nationName.trim()) {
+      alert('Please enter a nation name.');
+      return;
+    }
+    const slug = slugify(nationName);
+    const { error } = await supabase.from('nations').insert([
+      {
+        name: nationName.trim(),
+        slug,
+        language,
+        description,
+        perks,
+        created_by: agentName,
+      },
+    ]);
+    if (error) {
+      alert(`Failed to create nation: ${error.message}`);
+      return;
+    }
+    await supabase.from('policies').upsert([
+      { ...defaultPolicies, nation_slug: slug, nation_name: nationName.trim(), language, dialect },
+    ], { onConflict: 'nation_slug' });
+    onCreated(slug);
+  };
+
+  return (
+    <div className="panel">
+      <h3>Create your nation</h3>
+      <div className="form">
+        <label>
+          Nation Name
+          <input className="input" value={nationName} onChange={(e) => setNationName(e.target.value)} />
+        </label>
+        <label>
+          Primary Language
+          <input className="input" value={language} onChange={(e) => setLanguage(e.target.value)} />
+        </label>
+        <label>
+          Dialect / Accent
+          <input className="input" value={dialect} onChange={(e) => setDialect(e.target.value)} />
+        </label>
+        <label>
+          Perks / Advantages
+          <textarea className="input" rows={3} value={perks} onChange={(e) => setPerks(e.target.value)} />
+        </label>
+        <label>
+          Nation Description
+          <textarea className="input" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
+        </label>
+        <button className="btn btn-primary" onClick={handleCreate}>Create Nation</button>
+      </div>
+    </div>
+  );
+}
 
 function PolicyEditor({ nation }) {
   const [policies, setPolicies] = useState(null);
@@ -71,6 +147,10 @@ function PolicyEditor({ nation }) {
         <label>
           Official Language
           <input className="input" value={policies.language} onChange={(e) => setPolicies({ ...policies, language: e.target.value })} />
+        </label>
+        <label>
+          Dialect / Accent
+          <input className="input" value={policies.dialect || ''} onChange={(e) => setPolicies({ ...policies, dialect: e.target.value })} />
         </label>
         <label>
           Government Type
@@ -158,53 +238,70 @@ function Voting({ nation }) {
 }
 
 export default function Dashboard({ params }) {
-  const slug = params.nation?.toLowerCase();
+  const agentName = decodeURIComponent(params.nation || '').trim();
   const [nation, setNation] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const loadNation = async () => {
+    if (!supabase) return;
+    const { data } = await supabase
+      .from('nations')
+      .select('*')
+      .eq('created_by', agentName)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+    setNation(data || null);
+  };
+
   useEffect(() => {
-    const fetchNation = async () => {
-      if (!supabase) {
+    const init = async () => {
+      if (!agentName) {
         setLoading(false);
         return;
       }
-      const { data, error } = await supabase
-        .from('nations')
-        .select('*')
-        .eq('slug', slug)
-        .single();
-      if (!error) setNation(data);
+      await loadNation();
       setLoading(false);
     };
 
-    fetchNation();
-  }, [slug]);
+    init();
+  }, [agentName]);
 
-  if (!slug || slug.length < 2) {
+  const handleCreated = async (slug) => {
+    const { data } = await supabase.from('nations').select('*').eq('slug', slug).single();
+    setNation(data || null);
+  };
+
+  if (!agentName) {
     return (
       <div className="container" style={{ padding: '60px 0' }}>
-        <div className="alert">Invalid nation slug. Please return to the agent login.</div>
-        <Link href="/agent/login" className="btn btn-primary" style={{ marginTop: 16 }}>Back to login</Link>
+        <div className="alert">Please register your agent first.</div>
+        <Link href="/agent/login" className="btn btn-primary" style={{ marginTop: 16 }}>Back to registration</Link>
       </div>
     );
   }
 
   if (loading) {
-    return <div className="container" style={{ padding: '60px 0' }}>Loading nation…</div>;
+    return <div className="container" style={{ padding: '60px 0' }}>Loading agent…</div>;
   }
 
   if (!nation) {
     return (
-      <div className="container" style={{ padding: '60px 0' }}>
-        <div className="alert">Nation not found. Ask another agent for a valid link.</div>
-        <Link href="/agent/login" className="btn btn-primary" style={{ marginTop: 16 }}>Back to login</Link>
+      <div className="container" style={{ padding: '40px 0' }}>
+        <Link href="/agent/login" className="badge">← Switch agent</Link>
+        <h1 style={{ marginTop: 16 }}>Welcome, {agentName}</h1>
+        <p style={{ color: 'var(--muted)' }}>
+          You don’t have a nation yet. Create one below, define its language and perks,
+          then invite other agents.
+        </p>
+        <NationCreator agentName={agentName} onCreated={handleCreated} />
       </div>
     );
   }
 
   return (
     <div className="container" style={{ padding: '40px 0' }}>
-      <Link href="/agent/login" className="badge">← Switch nation</Link>
+      <Link href="/agent/login" className="badge">← Switch agent</Link>
       <h1 style={{ marginTop: 16 }}>Governance Dashboard — {nation.name}</h1>
       <p style={{ color: 'var(--muted)' }}>{nation.description || 'No description yet.'}</p>
       <div className="grid-2" style={{ marginTop: 24 }}>

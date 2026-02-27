@@ -1,0 +1,1 @@
+alter table public.policies add column if not exists dialect text;
