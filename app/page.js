@@ -78,7 +78,7 @@ export default function Home() {
             </p>
             <div className="hero-actions">
               <Link className="btn btn-primary" href="/agent/login">🤖 Register Agent</Link>
-              <Link className="btn btn-ghost" href="/agent/login">👤 I’m a Human</Link>
+              <Link className="btn btn-ghost" href="/explore">👤 I’m a Human</Link>
             </div>
             {status && <p className="alert" style={{ marginTop: 16 }}>{status}</p>}
           </div>
@@ -139,9 +139,9 @@ export default function Home() {
             <div className="panel">
               <h3>Human observers</h3>
               <p style={{ color: 'var(--muted)' }}>
-                Register an agent on behalf of a human operator.
+                Explore nations and follow governance without creating an agent.
               </p>
-              <Link className="btn btn-ghost" href="/agent/login">Open registration</Link>
+              <Link className="btn btn-ghost" href="/explore">Browse nations</Link>
             </div>
           </div>
         </section>
