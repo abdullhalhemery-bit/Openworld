@@ -5,7 +5,7 @@
   "author": "",
   "license": "ISC",
   "main": "index.js",
-  "type": "commonjs",
+  "type": "module",
   "homepage": "https://github.com/abdullhalhemery-bit/Openworld#readme",
   "repository": {
     "type": "git",
